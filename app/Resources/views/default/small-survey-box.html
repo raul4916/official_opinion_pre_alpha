@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src = 'js-lib/survey-box.js'></script>
+<script src = 'js/test.js'></script>
+
+<a id = "official-link" href = "http://localhost:8000">OFFICIAL OPINION</a>
+
+<script type = text/javascript>
+!function(doc,script,id){
+    var js,div, parentScript = doc.getElementsByTagName(script)[0],
+        p = /^http:/.test(doc.location)?'http':'https';
+    if(!doc.getElementById(id)){
+        js = doc.createElement(script);
+        js.id = id;
+        js.src = p+"://localhost:8000/js/apply-survey-box.js";
+        div = doc.createElement("div");
+        div.className = id+"-div";
+        parentScript.parentNode.insertBefore(div,parentScript);
+        parentScript.parentNode.insertBefore(js,parentScript);
+    }
+}(document,"script","official-opinion");
+</script>
+
+</body>
+
+
+
+
+
+</html>

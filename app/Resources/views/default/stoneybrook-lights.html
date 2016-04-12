@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div style = "position: relative; height:100%; width:100%" >
+<div id="map"></div>
+<div id = options style = "position: absolute; top: 0px; left: 0px; z-index: 99; height:100%; width: 100%" hidden></div>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgIuwxiWyjaq9m6JSUFpnTuLE6IeMSpSU&callback=initMap"
+        async defer></script>
+<script src="js/contextmenu.js"></script>
+<script>
+    var map;
+    var points;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 39.030252, lng: -77.0989345},
+            zoom: 19,
+            minZoom: 17,
+            rotateControl: false,
+            disableDoubleClickZoom: true,
+            mapTypeId: google.maps.MapTypeId.HYBRID,
+
+        });
+        map.addListener("rightclick",function(evt){
+            placeLightsOut(evt.latLng,map);
+        });
+        map.addListener("click",function(evt){
+            placeProblem(evt.latLng,map);
+        });
+    }
+
+    function placeProblem(latLng, map) {
+        var marker = new google.maps.Marker({
+            position: latLng,
+
+            map: map
+        });
+        marker.addListener('rightclick', function(evt){
+            marker.setVisible(false);
+        })
+        marker.addListener('click', function(evt) {
+            var x;
+            var y;
+
+            $("#options").append('<div style =" position:absolute; top:20%; left:30%;height:25%; width:25%;background-color:white;">' +
+                    '<div style = "position:absolute;top:2%; left:5% ">Problem:<input  id = problem type="text" name = "problem" /></div>' +
+                    '<div style = "position:absolute;top:10%; left:5.5%">' +
+                    '<p style = position:relative;>Description:</p><textarea style = "position:absolute;" rows="4" cols="30" id = "description"></textarea>' +
+                    '</div>' +
+                    '<div style = "position:absolute;top:50%; left:20%">' +
+                    '<input id=create style = "margin:50px" type=button value="Ok">' +
+                    '<input id=cancel style = "" type=button value="Cancel">' +
+                    '</div>' +
+                    '</div>');
+
+            document.getElementById('options').removeAttribute("hidden");
+            $('#create').click(function(){
+
+            });
+
+            marker.setLabel();
+        });
+    }
+    function placeLightsOut(latLng, map) {
+        var marker = new google.maps.Marker({
+            position: latLng,
+            icon: {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                strokeColor: 'yellow',
+                fillColor: 'yellow',
+                scale: 5,
+                title: "Problem here"
+            },
+            map: map
+        });
+        marker.addListener('rightclick', function(evt){
+            marker.setVisible(false);
+        })
+    }
+
+
+
+</script>
+
+</body>
+</html>
