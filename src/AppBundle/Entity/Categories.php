@@ -24,7 +24,7 @@ class Categories
      */
     protected $id;
     /**
-     * @ORM\Column(type = "string")
+     * @ORM\Column(type = "string", unique = true)
      */
     protected $name;
     /**
@@ -42,8 +42,10 @@ class Categories
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($name,$description)
     {
+        $this->name = $name;
+        $this->description = $description;
         $this->channels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->surveys = new \Doctrine\Common\Collections\ArrayCollection();
     }

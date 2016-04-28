@@ -13,19 +13,22 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 class TagsLib
 {
-    static function createTags(Registry $db, $tagName){
+    static function createTag(Registry $db, $tagName){
+        if(($tag = self::getTag($db,$tagName))!=null){
+            return $tag;
+        }
         $man = $db->getManager();
         $tag = new Tags($tagName);
         $man->persist($tag);
         $man->flush();
         return $tag;
     }
-    function getTags(Registry $db){
-        $tag = $db->getRepository("AppBundle:Tags")->findBy();
+    static function getTag(Registry $db,$tagname){
+        $tag = $db->getRepository("AppBundle:Tags")->findByTag($tagname);
         if(array_key_exists(0,$tag)){
             return $tag[0];
         }
-        return false;
+        return null;
     }
-    function changeTags($db){}
+
 }

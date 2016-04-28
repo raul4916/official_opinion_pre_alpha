@@ -8,7 +8,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Error\JSONException;
+use AppBundle\lib\ChannelsLib;
 use AppBundle\lib\DefinitionLib;
+use AppBundle\lib\PagesLib;
 use AppBundle\lib\ProjectsLib;
 use AppBundle\lib\SurveyLib;
 use AppBundle\lib\UserLib;
@@ -31,14 +33,15 @@ class RESTController extends Controller
     /**
      * @Route ("/check")
      */
-    function testing(){
+    function testing()
+    {
         ;
     }
 
     /**
-     * @Route("/json/{id}", name = "requestsCheck")
+     * @Route("/json/user", name = "requestsCheck")
      */
-    public function requestCheck($id, Request $request)
+    public function users($id, Request $request)
     {
         $db = $this->getDoctrine();
 //        $proj = ProjectsLib::getProject($db, $id);
@@ -46,79 +49,86 @@ class RESTController extends Controller
 //            return new Response("The ID is not valid");
 //        }
         $json = $request->getContent();
-        $json = json_decode($json,true);
-        switch($id){
-            case "create-user":
+        $json = json_decode($json, true);
+        switch ($request->getMethod()) {
+            case "POST":
                 /**
                  *    static function addUser(Registry $db,$pass, $username, $date_create, $date_login, $email,$fname, $lname,
-                $city,$state,$country, $age= 13, $primary_lang= "english", $race, $origin,
-                $status = ACTIVE,$email_confirmed= DefinitionLib::EMAIL_NOT_CONFIRMED,$group = DefinitionLib::NEW_USER)
+                 * $city,$state,$country, $age= 13, $primary_lang= "english", $race, $origin,
+                 * $status = ACTIVE,$email_confirmed= DefinitionLib::EMAIL_NOT_CONFIRMED,$group = DefinitionLib::NEW_USER)
                  */
-                if(($username = $json["username"]) == null){
-                    throw new QueryException("Error with the username, please type correctly");
+                if (array_key_exists("username", $json)) {
+                    $username = $json["username"];
+                    if (!preg_match("/^[A-Za-z]([A-Za-z]|\_|\-|\d)*/", $username)) {
+                        throw new QueryException("Username characters are not valid.");
+                    }
+                } else {
+                    throw new QueryException("Error with the username and/or password, please type correctly");
                 }
-                if(!preg_match("/^[A-Za-z]([A-Za-z]|\d)*/", $json["username"])) {
-                    throw new QueryException("Error with the username, please type correctly");
+                if (array_key_exists("password", $json)) {
+                    $password = $json["password"];
+                } else {
+                    throw new QueryException("Error with the username and/or password, please type correctly");
                 }
-                if(($password = $json["password"]) == null){
-                    throw new QueryException("Error with the password, please type correctly");
-                }
-                if(($email = $json["email"]) == null){
+                if (array_key_exists("email", $json)) {
+                    $email = $json["email"];
+                } else {
                     throw new QueryException("Error with the email, please type correctly");
                 }
-                if(array_key_exists("fname",$json)){
+
+                if (array_key_exists("fname", $json)) {
                     $fname = $json["fname"];
-                }else{
+                } else {
                     $fname = null;
                 }
-                if(array_key_exists("lname",$json)){
+                if (array_key_exists("lname", $json)) {
                     $lname = $json["lname"];
-                }else{
+                } else {
                     $lname = null;
                 }
-                if(array_key_exists("gender",$json)){
+                if (array_key_exists("gender", $json)) {
                     $gender = $json["gender"];
-                }else{
+                } else {
                     $gender = null;
                 }
-                if(array_key_exists("city",$json)){
+                if (array_key_exists("city", $json)) {
                     $city = $json["city"];
-                }else{
+                } else {
                     $city = null;
                 }
-                if(array_key_exists("state",$json)){
+                if (array_key_exists("state", $json)) {
                     $state = $json["state"];
-                }else{
+                } else {
                     $state = null;
                 }
-                if(array_key_exists("country",$json)){
+                if (array_key_exists("country", $json)) {
                     $country = $json["country"];
-                }else{
+                } else {
                     $country = null;
                 }
-                if(array_key_exists("primary_lang",$json)){
+                if (array_key_exists("primary_lang", $json)) {
                     $prim_lang = $json["primary_lang"];
-                }else{
+                } else {
                     $prim_lang = null;
                 }
-                if(array_key_exists("age",$json)){
+                if (array_key_exists("age", $json)) {
                     $age = $json["age"];
-                }else{
+                } else {
                     $age = null;
                 }
-                if(array_key_exists("origin",$json)){
+                if (array_key_exists("origin", $json)) {
                     $origin = $json["origin"];
-                }else{
+                } else {
                     $origin = null;
                 }
-                if(array_key_exists("race",$json)){
+                if (array_key_exists("race", $json)) {
                     $race = $json["race"];
-                }else{
+                } else {
                     $race = null;
                 }
 
-                UserLib::addUser($db, strtolower($username), $password,time(),time(),$email,$fname,$lname,
-                    $gender,$city,$state,$country,$age,$prim_lang,$race,$origin);
+                UserLib::addUser($db, strtolower($username), $password, time(), time(), $email, $fname, $lname,
+                    $gender, $city, $state, $country, $age, $prim_lang, $race, $origin);
 
                 $response = json_encode(
                     array(
@@ -128,54 +138,88 @@ class RESTController extends Controller
                 );
                 return new Response($response);
                 break;
-            case "getUserInfo":
+            case "GET":
                 //still got to decide what to do with this
                 $username = $json['username'];
-                if(preg_match("/^[A-Za-z]([A-Za-z]|\d)*/", $username)) {
-                    $this->username = $username;
+                if (preg_match("/^[A-Za-z]([A-Za-z]|\d)*/", $username) && strlen($username) >= 6) {
+                    return new Response("Error, Username doesnt exist", 500);
                 }
-                $user = UserLib::getUser($db,$username);
+                $user = UserLib::getUserInfo($db, $username, "user");
+                if (!isset($user)) {
+                    throw new QueryException("User does exist - Cant get info");
+                }
                 $response = json_encode(
                     array(
                         "status" => DefinitionLib::SUCCESS,
-                        "return" => true,
+                        "return" => $user,
                     )
                 );
         }
         return new Response($response);
-
     }
-    /**
-     * @Route("/json/{id}/{website}", name = "surveys")
-     */
-    public function getSurveysForSite($id,$website, Request $request)
-    {
-        if ($id == "get-surveys") {
 
-        } elseif ($id == "create-survey") {
-            $json = $request->getContent();
+    /**
+     * I expect this
+     * @Route("/json/survey", name = "surveys")
+     */
+    public function surveys(Request $request)
+    {
+        $json = $request->getContent();
+        $method = $request->getMethod();
+        $url = $request->getHost() . $request->getUri();
+        $db = $this->getDoctrine();
+        if ($method == "GET") {
+            $survey = PagesLib::getPage($db,$url).getSurveys();
+            $response = json_encode(
+                array(
+                    "status" => DefinitionLib::SUCCESS,
+                    "return" => SurveyLib::surveysToArray($survey),
+                    )
+            );
+
+        } elseif ($method == "POST") {
             $data = json_decode($json, true);
-            $data['username'] = "raul4916";//got to change this
-            if($data["type"]=="yes_no") {
+            $data['username'] = "raul4916";//got to remove this
+            if (!array_key_exists("username", $data)) {
+                throw new QueryException("User Does not Exists");
+            }
+            $user = UserLib::getUser($db, $data["username"]);
+            if ($user->getEmailConfirmation() != DefinitionLib::EMAIL_CONFIRMED) {
+                throw new QueryException("Email wasn't confirmed, please confirm it");
+            }
+            if ($data["type"] == "yes_no") {
                 $data["responses"] = ["yes", "no"];
             }
-            if($data["type"]=="multiple_choice") {
+            if ($data["type"] == "rating") {
+                $data["responses"] = [1, 2, 3, 4, 5];
             }
-            if($data["type"]=="rating") {
-                $data["responses"]=[1,2,3,4,5];
+            if (array_key_exists("channel", $data)) {
+                if ($members = ChannelsLib::getChannel($db, $data["channel"])->getMembers()) {
+                    foreach ($members as $userTemp) {
+                        if ($userTemp->getUsername() == $data["username"]) {
+                            SurveyLib::createSurvey($this->getDoctrine(), $data);
+                            $response = json_encode(
+                                array(
+                                    "status" => DefinitionLib::SUCCESS,
+                                    "return" => true,
+                                )
+                            );
+                            return new Response($response);
+                        }
+                    }
+                }
             }
-            $data["webnum"]=$website;
-            SurveyLib::createSurvey($this->getDoctrine(),$data);
 
-            return new Response(json_encode($data));
-        }elseif ($id == "survey-page"){
-            $arr = ["response" => "DOES NOT EXIST"];
-            return new Response(json_encode($arr));
+            SurveyLib::createSurvey($this->getDoctrine(), $data);
+            $response = json_encode(
+                array(
+                    "status" => DefinitionLib::SUCCESS,
+                    "return" => true,
+                )
+            );
+            return new Response($response);
         }
     }
-
-
-
 //
 //$json = json_encode(array('bob'=> $id));
 //$arr = array('Content-Type' => 'application/json');
@@ -184,4 +228,5 @@ class RESTController extends Controller
 //$response = $response->setCharset('ISO-8859-1');
 //$response = $response->prepare($request);
 //return $response;
+
 }

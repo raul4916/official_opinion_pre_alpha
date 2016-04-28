@@ -54,8 +54,8 @@ class Responses
      */
     public function __construct($surveyID,$answer)
     {
-        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
         $this->answer= $answer;
+        $this->results = new \Doctrine\Common\Collections\ArrayCollection();
         $this->surveys = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
@@ -107,7 +107,11 @@ class Responses
         $this->results[$surveyID] = $amount;
         return $this;
     }
+    public function getResult($surveyID)
+    {
+        return $this->results[$surveyID];
 
+    }
     /**
      * Get results
      *

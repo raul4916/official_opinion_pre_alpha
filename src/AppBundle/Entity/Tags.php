@@ -26,7 +26,6 @@ class Tags{
      * @ORM\Column(type="bigint")
      */
     protected $id;
-
     /**
      * @ORM\Column(type="string", unique = true)
      */
@@ -39,10 +38,6 @@ class Tags{
      * @ORM\ManyToMany(targetEntity = "Channels", inversedBy = "tags")
      */
     protected $channels = null;
-    /**
-     * @ORM\ManyToMany(targetEntity = "Users", inversedBy = "tags")
-     */
-    protected $users= null;
     /**
      * @ORM\ManyToMany(targetEntity = "Pages", inversedBy = "tags")
      */
@@ -65,7 +60,6 @@ class Tags{
         $this->tag = $tag;
         $this->surveys = new \Doctrine\Common\Collections\ArrayCollection();
         $this->channels = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pages = new \Doctrine\Common\Collections\ArrayCollection();
         $this->responses = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
@@ -172,41 +166,6 @@ class Tags{
     {
         return $this->channels;
     }
-
-    /**
-     * Add user
-     *
-     * @param \AppBundle\Entity\Users $user
-     *
-     * @return Tags
-     */
-    public function addUser(\AppBundle\Entity\Users $user)
-    {
-        $this->users[] = $user;
-
-        return $this;
-    }
-
-    /**
-     * Remove user
-     *
-     * @param \AppBundle\Entity\Users $user
-     */
-    public function removeUser(\AppBundle\Entity\Users $user)
-    {
-        $this->users->removeElement($user);
-    }
-
-    /**
-     * Get users
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getUsers()
-    {
-        return $this->users;
-    }
-
     /**
      * Add page
      *

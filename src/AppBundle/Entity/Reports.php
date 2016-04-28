@@ -77,6 +77,7 @@ class Reports
                                     Pages $page = null, Tags $tag = null,\Doctrine\Common\Collections\ArrayCollection $reasons)
     {
         $this->status = DefinitionLib::ACTIVE;
+        $this->count = 1;
         $this->reasons = $reasons;
         $this->survey = $survey;
         $this->user = $user;

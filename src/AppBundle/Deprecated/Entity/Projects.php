@@ -16,7 +16,6 @@ use AppBundle\Entity\Users;
  */
 class Projects
 {
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -40,18 +39,16 @@ class Projects
      * @ORM\Column(type="string")
      */
     protected $apiKey;
-
-
     /**
      * Get id
      *
      * @return integer
      */
+
     public function getId()
     {
         return $this->id;
     }
-
     /**
      * Set projectName
      *
@@ -65,7 +62,6 @@ class Projects
 
         return $this;
     }
-
     /**
      * Get projectName
      *
@@ -75,7 +71,6 @@ class Projects
     {
         return $this->projectName;
     }
-
     /**
      * Set url
      *
@@ -89,7 +84,6 @@ class Projects
 
         return $this;
     }
-
     /**
      * Get url
      *
@@ -99,7 +93,6 @@ class Projects
     {
         return $this->url;
     }
-
     /**
      * Set apiKey
      *
@@ -113,7 +106,6 @@ class Projects
 
         return $this;
     }
-
     /**
      * Get apiKey
      *
@@ -123,7 +115,6 @@ class Projects
     {
         return $this->apiKey;
     }
-
     /**
      * Set user
      *
@@ -137,7 +128,6 @@ class Projects
 
         return $this;
     }
-
     /**
      * Get user
      *

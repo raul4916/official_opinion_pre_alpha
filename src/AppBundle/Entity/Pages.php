@@ -24,13 +24,9 @@ class Pages
      */
     protected $id;
     /**
-     * @ORM\Column(name = "full_website", type = "string", unique = true)
+     * @ORM\Column(name = "website", type = "string", unique = true)
      */
-    protected $fullWebsite;
-    /**
-     * @ORM\Column(name = "website_in_numbers", type = "string", unique = true)
-     */
-    protected $websiteInNumbers;
+    protected $website;
     /**
      * @ORM\ManyToOne(targetEntity = "Channels", inversedBy = "pages")
      */
@@ -38,9 +34,9 @@ class Pages
     /**
      * @ORM\OneToMany(targetEntity = "Surveys", mappedBy = "pages")
      */
-    protected $survey;
+    protected $surveys;
     /**
-     * @ORM\ManyToMany(targetEntity = "Tags", mappedBy = "pages")
+     * @ORM\ManyToMany(targetEntity = "Tags", mappedBy = "page")
      */
     protected $tags= null;
     /**
@@ -51,14 +47,13 @@ class Pages
     /**
      * Constructor
      */
-    public function __construct($website, $webnum, $channel = null)
+    public function __construct($website, $channel = null)
     {
         $this->fullWebsite = $website;
-        $this->websiteInNumbers=$webnum;
+        $this->channel = $channel;
         $this->survey = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->channel =$channel;
-
+        $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
     }
     /**
      * Get id
@@ -77,9 +72,9 @@ class Pages
      *
      * @return Pages
      */
-    public function setFullWebsite($fullWebsite)
+    public function setWebsite($fullWebsite)
     {
-        $this->full_website = $fullWebsite;
+        $this->website = $fullWebsite;
         return $this;
     }
 
@@ -88,11 +83,10 @@ class Pages
      *
      * @return string
      */
-    public function getFullWebsite()
+    public function getWebsite()
     {
-        return $this->full_website;
+        return $this->website;
     }
-
     /**
      * Set channel
      *
@@ -150,31 +144,6 @@ class Pages
     {
         return $this->survey;
     }
-
-    /**
-     * Set websiteInNumbers
-     *
-     * @param string $websiteInNumbers
-     *
-     * @return Pages
-     */
-    public function setWebsiteInNumbers($websiteInNumbers)
-    {
-        $this->website_in_numbers = $websiteInNumbers;
-
-        return $this;
-    }
-
-    /**
-     * Get websiteInNumbers
-     *
-     * @return string
-     */
-    public function getWebsiteInNumbers()
-    {
-        return $this->website_in_numbers;
-    }
-
     /**
      * Add tag
      *
@@ -208,7 +177,6 @@ class Pages
     {
         return $this->tags;
     }
-
     /**
      * Add report
      *

@@ -17,3 +17,6 @@ namespace AppBundle\Tools;
         }
         return $str;
     }
+    function str_to_int($str){
+        return intval(ord(strtolower($str)));
+    }

@@ -14,21 +14,17 @@ use AppBundle\Entity\Pages;
 class PagesLib
 {
     static function createPage(Registry $db, $website, $webnum, $channel = null){
-        try{
-            if ($channel == null) {
-                $page = new Pages($website, $webnum);
-            } else {
-                $page = new Pages($website, $webnum, $channel);
-            }
-        }catch(Exception $e){
-            echo "caught it";
+        if(($page = self::getPage($db,$webnum))){
+            self::createPage($db, $website, $webnum, $channel);
+            $page = self::getPage($db, $webnum);
         }
         $man = $db->getManager();
         $man->persist($page);
         $man->flush();
+        return $page;
     }
-    static function getPage(Registry $db, $webnum){
-        $page = $db->getRepository("AppBundle:Pages")->findByWebsiteInNumbers($webnum);
+    static function getPage(Registry $db, $website){
+        $page = $db->getRepository("AppBundle:Pages")->findByWebsite($website);
         if(array_key_exists(0,$page)){
             return $page[0];
         }
@@ -40,6 +36,6 @@ class PagesLib
             $page = self::getPage($db, $webnum);
         }
         return $page;
-
     }
+
 }

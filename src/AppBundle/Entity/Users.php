@@ -94,6 +94,11 @@ class Users {
     protected $userGroup= null;
     /**
      * member of this channel
+     * @ORM\OneToMany(targetEntity = "Channels", mappedBy = "channelCreator")
+     */
+    protected $channelCreator = null;
+    /**
+     * member of these channels
      * @ORM\OneToMany(targetEntity = "Channels", mappedBy = "users")
      */
     protected $channels= null;
@@ -114,10 +119,6 @@ class Users {
      */
     protected $surveys= null;
     /**
-     * @ORM\ManyToMany(targetEntity = "Tags", mappedBy = "users")
-     */
-    protected $tags= null;
-    /**
      * @ORM\OneToMany(targetEntity = "Reports", mappedBy = "user")
      */
     protected $reports;
@@ -127,7 +128,7 @@ class Users {
      * Constructor
      */
     public function __construct($username,$password, $date_create, $date_login, $email, $email_confirmed, $fname,
-                                $lname,$gender, $location, $age, $primary_lang, $race, $origin,$status)
+                                $lname,$gender, $location, $age, $primary_lang, $race, $origin, $status, $userGroup)
     {
         $this->fid = $password;
         $this->gender = $gender;
@@ -144,11 +145,14 @@ class Users {
         $this->race = $race;
         $this->origin = $origin;
         $this->userStatus = $status;
+        $this->userGroup = $userGroup;
         $this->channels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->subscribed = new \Doctrine\Common\Collections\ArrayCollection();
         $this->followers = new \Doctrine\Common\Collections\ArrayCollection();
         $this->following = new \Doctrine\Common\Collections\ArrayCollection();
         $this->surveys = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->channelCreator = new \Doctrine\Common\Collections\ArrayCollection();
+
     }
 
 
@@ -410,15 +414,15 @@ class Users {
      */
     public function getUserGroup()
     {
-        return $this->user_group;
+        return $this->userGroup;
     }
 
     /**
-     * @param mixed $user_group
+     * @param mixed $userGroup
      */
-    public function setUserGroup($user_group)
+    public function setUserGroup($userGroup)
     {
-        $this->user_group = $user_group;
+        $this->userGroup = $userGroup;
     }
 
     /**

@@ -9,8 +9,8 @@
 
 namespace AppBundle\Entity;
 
+use function AppBundle\Tools\str_to_int;
 use Doctrine\ORM\Mapping as ORM;
-
 /**
  * @ORM\Entity
  * @ORM\Table(name="location")
@@ -18,8 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Locations{
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy = "AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="bigint")
      */
     protected $id;
     /**
@@ -38,7 +37,6 @@ class Locations{
      * @ORM\OneToMany(targetEntity="Users", mappedBy="location")
      */
     protected $users= null;
-
     /**
      * Location constructor.
      * @param $country
@@ -50,7 +48,8 @@ class Locations{
         $this->country = $country;
         $this->city = $city;
         $this->state = $state;
-        $this->user = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->id = str_to_int($country.$state.$city);
     }
 
     /**

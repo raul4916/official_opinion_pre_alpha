@@ -79,11 +79,11 @@ class Surveys
      */
     protected $survey_status;
     /**
-     * @ORM\ManyToOne(targetEntity = "Pages", inversedBy="survey")
+     * @ORM\ManyToOne(targetEntity = "Pages", inversedBy="surveys")
      */
-    protected $pages;
+    protected $page;
     /**
-     *
+     * @ORM\ManyToMany(targetEntity = "Categories", mappedBy="surveys")
      */
     protected $categories;
     /**
@@ -120,7 +120,7 @@ class Surveys
         $this->survey_status = DefinitionLib::ACTIVE;
         $this->date_created = time();
         $this->date_modified = time();
-        $this->pages = $pages;
+        $this->page = $pages;
         $this->channel = $channel;
         $this->groupAllowed = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
@@ -367,13 +367,13 @@ class Surveys
     /**
      * Set pages
      *
-     * @param \AppBundle\Entity\Pages $pages
+     * @param \AppBundle\Entity\Pages $page
      *
      * @return Surveys
      */
-    public function setPages(\AppBundle\Entity\Pages $pages = null)
+    public function setPage(\AppBundle\Entity\Pages $page = null)
     {
-        $this->pages = $pages;
+        $this->page = $page;
 
         return $this;
     }
@@ -383,9 +383,9 @@ class Surveys
      *
      * @return \AppBundle\Entity\Pages
      */
-    public function getPages()
+    public function getPage()
     {
-        return $this->pages;
+        return $this->page;
     }
 
     /**

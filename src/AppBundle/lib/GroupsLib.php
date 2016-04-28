@@ -13,20 +13,36 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 class GroupsLib
 {
-    function createGroups(Registry $db,$type){
-        $man = $db->getManager();
-        $group = new Groups($type);
-        $man->persist($group);
-        $man->flush();
-        return $group;
-    }
-    function getGroups(Registry $db){
-        $page = $db->getRepository("AppBundle:Groups")->findByWebsiteInNumbers($webnum);
-        if(array_key_exists(0,$page)){
-            return $page[0];
-        }
-        return false;
-    }
+    static function createGroup(Registry $db,$type){
+        if(is_array($type)){
+            $groups = [];
 
-    function changeGroups($db){}
+            foreach($type as $t){
+                $groups[] = self::createGroup($db,$t);
+            }
+            return $groups;
+        }
+        if(($group = self::getGroup($db,$type))==null){
+            return $group;
+        }
+        else {
+            $man = $db->getManager();
+            $group = new Groups($type);
+            $man->persist($group);
+            $man->flush();
+            return $group;
+        }
+    }
+    static function getGroup(Registry $db,$type){
+        $group = $db->getRepository("AppBundle:Groups")->findByType($type);
+        if(array_key_exists(0,$group)){
+            return $group[0];
+        }
+        return null;
+    }
+    static function exists($db,$type){
+        $group = self::getGroup($db,$type);
+        return isset($group);
+    }
+    function changeGroup($db){}
 }

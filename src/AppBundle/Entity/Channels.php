@@ -41,7 +41,7 @@ class Channels{
     protected $description;
 
     /**
-     * @ORM\Column(type = "string")
+     * @ORM\Column(type = "string", nullable = true)
      */
     protected $website;
 
@@ -49,7 +49,10 @@ class Channels{
      * @ORM\ManyToMany(targetEntity = "Channels", mappedBy = "channels")
      */
     protected $channels;
-
+    /**
+     * @ORM\ManyToOne(targetEntity = "Users", mappedBy = "channelCreator")
+     */
+    protected $creator;
     /**
      * @ORM\OneToMany(targetEntity = "Users", mappedBy = "channels")
      */
@@ -83,15 +86,22 @@ class Channels{
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($name,$creator,\Doctrine\Common\Collections\ArrayCollection $categories,$description,$website)
     {
+        $this->name = $name;
+        $this->creator = $creator;
+        $this->categories = $categories;
+        $this->description = $description;
+        $this->website = $website;
         $this->channels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->members = new \Doctrine\Common\Collections\ArrayCollection();
         $this->subscribers = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pages = new \Doctrine\Common\Collections\ArrayCollection();
         $this->surveys = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
 
+    }
     /**
      * Get id
      *
@@ -263,7 +273,7 @@ class Channels{
      */
     public function getMembers()
     {
-        return $this->members;
+        return $this->members.toArray();
     }
 
     /**

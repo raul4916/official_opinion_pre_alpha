@@ -21,22 +21,30 @@ class UserLib
     $authentication)
      *
      */
-
-    static function addUser(Registry $db,$username,$password, $date_create, $date_login, $email,$fname = null, $lname = null,
-                            $gender = null,$city = null,$state = null,$country = null, $age= null, $primary_lang= null, $race = null, $origin = null,
-                            $status = DefinitionLib::ACTIVE,$email_confirmed= DefinitionLib::EMAIL_NOT_CONFIRMED,$group = DefinitionLib::NEW_USER)
+    static function addUserArray(Registry $db,array $user_info)
     {
+        return addUser($db,$user_info['username'],$user_info['password'],$user_info['date_create'],$user_info['date_login'],$user_info['email'],$user_info['fname'],
+            $user_info['lname'],$user_info['gender'],$user_info['city'],$user_info['state'],$user_info['country'],$user_info['age'],$user_info['primary_lang'],$user_info['race'],
+            $user_info['origin']);
+
+    }
+    static function addUser(Registry $db,$username,$password, $date_create, $date_login, $email,$fname = null, $lname = null,
+                            $gender = null,$city = null,$state = null,$country = null, $age = null, $primary_lang = null, $race = null, $origin = null,
+                            $status = DefinitionLib::ACTIVE,$email_confirmed = DefinitionLib::EMAIL_NOT_CONFIRMED,$group = DefinitionLib::NEW_USER)
+    {
+        if(($user = self::getUser($username))!=null){
+            return $user;
+        }
         $man  = $db->getManager();
         $fid = password_hash($password,PASSWORD_DEFAULT);
         $location = new Locations($country,$state,$city);
+        $group = GroupsLib::createGroup($db,$group);
+        $man->persist($group);
         $man->persist($location);
-
-        $user = new Users($username,$fid,$date_create, $date_login, $email,$email_confirmed, $fname,
-            $lname,$gender,$location,$age, $primary_lang,$race,$origin,$status,$group);
-
+        $user = new Users($username,$fid,$date_create,$date_login,$email,$email_confirmed,$fname,
+            $lname,$gender,$location,$age,$primary_lang,$race,$origin,$status,$group);
         $man->persist($user);
         $man->flush();
-
     }
     /**
      * @param $db
@@ -55,11 +63,61 @@ class UserLib
 //            return $user;
 //        }
         return $user;
-        throw new QueryException("username or password is incorrect please try again");
-
     }
     static function deleteUser(Registry $db,$username){
         self::changeData($db,"status",DefinitionLib::DELETED,$username);
+    }
+    static function getUserInfo(Registry $db,$username,$viewer){
+        if($viewer == "user") {
+            $user = self::getUser($db, $username);
+            $username = $user->getUsername();
+            $userGroup = $user->getUserGroup();
+            $userStatus = $user->getUserStatus();
+            $date_login = $user->getDateLogin();
+            $email = $user->getEmail();
+            $email_confirmed = $user->getEmailConfirmed();
+            $fname = $user->getFname();
+            $lname = $user->getLname();
+            $gender = $user->getGender();
+            $location = $user->getLocation();
+            $age = $user->getAge();
+            $primary_lang = $user->getPrimaryLang();
+            $race = $user->getRace();
+            $origin = $user->getOrigin();
+
+            $array = array(
+                "username" => $username,
+                "userGroup" => $userGroup,
+                "userStatus" => $userStatus,
+                "date_login" => $date_login,
+                "email" => $email,
+                "email_confirmed" => $email_confirmed,
+                "fname" => $fname,
+                "lname" => $lname,
+                "gender" => $gender,
+                "location" => $location,
+                "age" => $age,
+                "primary_lang" => $primary_lang,
+                "race" => $race,
+                "origin" => $origin
+            );
+            return $array;
+
+        }
+        if($viewer == "public"){
+            $username = $user->getUsername();
+            $userGroup = $user->getUserGroup();
+            $userStatus = $user->getUserStatus();
+            $date_login = $user->getUserStatus();
+            $array = array(
+                "username" => $username,
+                "userGroup" => $userGroup,
+                "userStatus" => $userStatus,
+                "date_login" => $date_login
+            );
+            return $array;
+        }
+        return null;
     }
     static function  changeData(Registry $db, $data,$dataObj, $username){
         $user = self::getUser($db,$username);

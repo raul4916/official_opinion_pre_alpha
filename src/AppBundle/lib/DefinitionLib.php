@@ -31,18 +31,19 @@ class DefinitionLib
     const YES_NO = 22;
 
 
-    //GROUP CONSTANTS
-    const NEW_USER = 100;
-    const ADMIN = 101;
-    const MEMBER  = 102;
-    const SENIOR_MEMBER = 103;
-    const MODERATOR = 104;
-    const GUEST = 105;
+
 
     //SUCCESS/FAILURE
     const SUCCESS = 200;
     const FAILURE = 500;
 
+    //GROUP CONSTANTS
+    const NEW_USER = 'NEW_USER';
+    const ADMIN = 'ADMIN';
+    const MEMBER  = 'MEMBER';
+    const SENIOR_MEMBER = 'SENIOR_MEMBER';
+    const MODERATOR = 'MODERATOR';
+    const GUEST = 'GUEST';
 
     //STRING CONSTANTS
 
