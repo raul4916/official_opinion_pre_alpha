@@ -30,14 +30,14 @@ class UserLib
     }
     static function addUser(Registry $db,$username,$password, $date_create, $date_login, $email,$fname = null, $lname = null,
                             $gender = null,$city = null,$state = null,$country = null, $age = null, $primary_lang = null, $race = null, $origin = null,
-                            $status = DefinitionLib::ACTIVE,$email_confirmed = DefinitionLib::EMAIL_NOT_CONFIRMED,$group = DefinitionLib::NEW_USER)
+                            $status = DefinitionLib::ACTIVE,$email_confirmed = DefinitionLib::EMAIL_NOT_CONFIRMED, $group = DefinitionLib::NEW_USER)
     {
-        if(($user = self::getUser($username))!=null){
+        if(($user = self::getUser($db,$username))!=null){
             return $user;
         }
         $man  = $db->getManager();
         $fid = password_hash($password,PASSWORD_DEFAULT);
-        $location = new Locations($country,$state,$city);
+        $location = LocationsLib::createLocation($db,$country,$state,$city);
         $group = GroupsLib::createGroup($db,$group);
         $man->persist($group);
         $man->persist($location);
@@ -56,13 +56,19 @@ class UserLib
     static function getUser(Registry $db, $username){
         if(!isset($db))
             throw new QueryException("No database");
-        $user = $db->getRepository('AppBundle:Users')->findByUsername($username)[0];
-        if( !$user->getEmailConfirmed() ==  DefinitionLib::EMAIL_NOT_CONFIRMED)
-            throw new QueryException("Email not confirmed");
+        $user = $db->getRepository('AppBundle:Users')->findByUsername($username);
+        if(array_key_exists(0,$user)){
+            $user = $user[0];
+            if( !$user->getEmailConfirmed() ==  DefinitionLib::EMAIL_NOT_CONFIRMED)
+                throw new QueryException("Email not confirmed");
+        }else{
+            return null;
+        }
+        return $user;
+
 //        if(password_verify($password,$user->getFid())) {
 //            return $user;
 //        }
-        return $user;
     }
     static function deleteUser(Registry $db,$username){
         self::changeData($db,"status",DefinitionLib::DELETED,$username);
@@ -74,6 +80,8 @@ class UserLib
             $userGroup = $user->getUserGroup();
             $userStatus = $user->getUserStatus();
             $date_login = $user->getDateLogin();
+            $date_create = $user->getDateCreate();
+
             $email = $user->getEmail();
             $email_confirmed = $user->getEmailConfirmed();
             $fname = $user->getFname();
@@ -90,6 +98,7 @@ class UserLib
                 "userGroup" => $userGroup,
                 "userStatus" => $userStatus,
                 "date_login" => $date_login,
+                "date_create" => $date_create,
                 "email" => $email,
                 "email_confirmed" => $email_confirmed,
                 "fname" => $fname,
@@ -102,13 +111,13 @@ class UserLib
                 "origin" => $origin
             );
             return $array;
-
         }
         if($viewer == "public"){
+            $user = self::getUser($db, $username);
             $username = $user->getUsername();
             $userGroup = $user->getUserGroup();
             $userStatus = $user->getUserStatus();
-            $date_login = $user->getUserStatus();
+            $date_login = $user->getDateLogin();
             $array = array(
                 "username" => $username,
                 "userGroup" => $userGroup,

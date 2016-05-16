@@ -93,8 +93,8 @@ class Users {
      */
     protected $userGroup= null;
     /**
-     * member of this channel
-     * @ORM\OneToMany(targetEntity = "Channels", mappedBy = "channelCreator")
+     * creator of this channel
+     * @ORM\OneToMany(targetEntity = "Channels", mappedBy = "creator")
      */
     protected $channelCreator = null;
     /**
@@ -710,5 +710,39 @@ class Users {
     public function getReports()
     {
         return $this->reports;
+    }
+
+    /**
+     * Add channelCreator
+     *
+     * @param \AppBundle\Entity\Channels $channelCreator
+     *
+     * @return Users
+     */
+    public function addChannelCreator(\AppBundle\Entity\Channels $channelCreator)
+    {
+        $this->channelCreator[] = $channelCreator;
+
+        return $this;
+    }
+
+    /**
+     * Remove channelCreator
+     *
+     * @param \AppBundle\Entity\Channels $channelCreator
+     */
+    public function removeChannelCreator(\AppBundle\Entity\Channels $channelCreator)
+    {
+        $this->channelCreator->removeElement($channelCreator);
+    }
+
+    /**
+     * Get channelCreator
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChannelCreator()
+    {
+        return $this->channelCreator;
     }
 }

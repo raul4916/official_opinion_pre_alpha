@@ -27,6 +27,7 @@
 <script>
     var map;
     var points;
+    var markers=[];
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -49,7 +50,6 @@
     function placeProblem(latLng, map) {
         var marker = new google.maps.Marker({
             position: latLng,
-
             map: map
         });
         marker.addListener('rightclick', function(evt){
@@ -59,23 +59,27 @@
             var x;
             var y;
 
-            $("#options").append('<div style =" position:absolute; top:20%; left:30%;height:25%; width:25%;background-color:white;">' +
+            $("#options").append('<div id = "temp" style =" position:absolute; top:20%; left:30%;height:25%; width:25%;background-color:white;">' +
                     '<div style = "position:absolute;top:2%; left:5% ">Problem:<input  id = problem type="text" name = "problem" /></div>' +
                     '<div style = "position:absolute;top:10%; left:5.5%">' +
                     '<p style = position:relative;>Description:</p><textarea style = "position:absolute;" rows="4" cols="30" id = "description"></textarea>' +
                     '</div>' +
                     '<div style = "position:absolute;top:50%; left:20%">' +
-                    '<input id=create style = "margin:50px" type=button value="Ok">' +
+                    '<input id=create style = "margin:50px" type=button value="OK">' +
                     '<input id=cancel style = "" type=button value="Cancel">' +
                     '</div>' +
                     '</div>');
 
             document.getElementById('options').removeAttribute("hidden");
             $('#create').click(function(){
-
+                marker.setLabel($('#problem').innerHTML);
+                marker.info($('#description').innerHTML)
+                $("#options").remove();
             });
-
-            marker.setLabel();
+            $('#cancel').click(function() {
+                marker.remove();
+                $("#options").remove();
+            });
         });
     }
     function placeLightsOut(latLng, map) {

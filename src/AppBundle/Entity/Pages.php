@@ -24,7 +24,7 @@ class Pages
      */
     protected $id;
     /**
-     * @ORM\Column(name = "website", type = "string", unique = true)
+     * @ORM\Column(type = "string", unique = true)
      */
     protected $website;
     /**
@@ -209,5 +209,15 @@ class Pages
     public function getReports()
     {
         return $this->reports;
+    }
+
+    /**
+     * Get surveys
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSurveys()
+    {
+        return $this->surveys;
     }
 }

@@ -9,11 +9,11 @@
 
 namespace AppBundle\Entity;
 
-use function AppBundle\Tools\str_to_int;
+use AppBundle\Tools\Tools;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
- * @ORM\Table(name="location")
+ * @ORM\Table(name="locations")
  */
 class Locations{
     /**
@@ -49,7 +49,7 @@ class Locations{
         $this->city = $city;
         $this->state = $state;
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->id = str_to_int($country.$state.$city);
+        $this->id = Tools::str_to_int($country.$state.$city);
     }
 
     /**
@@ -142,5 +142,19 @@ class Locations{
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     *
+     * @return Locations
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 }

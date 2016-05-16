@@ -41,7 +41,7 @@ class RESTController extends Controller
     /**
      * @Route("/json/user", name = "requestsCheck")
      */
-    public function users($id, Request $request)
+    public function users(Request $request)
     {
         $db = $this->getDoctrine();
 //        $proj = ProjectsLib::getProject($db, $id);
@@ -159,7 +159,6 @@ class RESTController extends Controller
     }
 
     /**
-     * I expect this
      * @Route("/json/survey", name = "surveys")
      */
     public function surveys(Request $request)

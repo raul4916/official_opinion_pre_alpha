@@ -14,7 +14,7 @@ class ResponsesLib
 {
     static function createResponses(Registry $db,array $answers){
         $man = $db->getManager();
-        $responses = new \Doctrine\Common\Collections\ArrayCollection();;
+        $responses = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($answers as $answer) {
             if($response = self::getResponses($answer)){
                 $responses.add($response);

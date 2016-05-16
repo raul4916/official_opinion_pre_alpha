@@ -21,8 +21,7 @@ class GroupsLib
                 $groups[] = self::createGroup($db,$t);
             }
             return $groups;
-        }
-        if(($group = self::getGroup($db,$type))==null){
+        }elseif(($group = self::getGroup($db,$type))!=null){
             return $group;
         }
         else {

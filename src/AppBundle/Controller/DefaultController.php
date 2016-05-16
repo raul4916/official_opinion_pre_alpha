@@ -25,7 +25,7 @@ class DefaultController extends Controller
 //        $url = DefinitionLib::MAIN_URL . "json/1";
 //        $result = NetworkLib::requestServer($url);
 //        return $this->render("default/index.html.twig",['base_dir' => $_SERVER['REQUEST_URI']]);
-        return $this->render("default/stoneybrook-lights.html");
+        return $this->render("default/index.html.twig");
     }
 
     /**

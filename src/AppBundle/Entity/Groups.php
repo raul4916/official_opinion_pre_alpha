@@ -39,7 +39,7 @@ class Groups
      */
     public function __construct($type)
     {
-        $this->$type = $type;
+        $this->type = $type;
         $this->surveys = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }

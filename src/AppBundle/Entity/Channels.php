@@ -50,7 +50,7 @@ class Channels{
      */
     protected $channels;
     /**
-     * @ORM\ManyToOne(targetEntity = "Users", mappedBy = "channelCreator")
+     * @ORM\ManyToOne(targetEntity = "Users", inversedBy = "channelCreator")
      */
     protected $creator;
     /**
@@ -492,5 +492,29 @@ class Channels{
     public function getReports()
     {
         return $this->reports;
+    }
+
+    /**
+     * Set creator
+     *
+     * @param \AppBundle\Entity\Users $creator
+     *
+     * @return Channels
+     */
+    public function setCreator(\AppBundle\Entity\Users $creator = null)
+    {
+        $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * Get creator
+     *
+     * @return \AppBundle\Entity\Users
+     */
+    public function getCreator()
+    {
+        return $this->creator;
     }
 }
