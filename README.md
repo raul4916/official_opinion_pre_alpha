@@ -10,4 +10,4 @@ Goals:
 2. finish implementing the server-side RESTful API
 3. begin implementing the client-side(deciding if I will be using a framework(i.e.:Backbone.js) or working without a framework)
 4. implementing security measures within the website.
-5. debugging and entering beta - By June
+5. debugging and entering beta - Postponed
